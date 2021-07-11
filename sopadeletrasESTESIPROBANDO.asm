@@ -17,22 +17,23 @@ vehiculos2      db  "\src\vehiculos2.txt",0
 lenguajes1      db  "\src\lenguajes1.txt",0
 lenguajes2      db  "\src\lenguajes2.txt",0
 handler         dw  ?
-palabra1        db  0
-palabra2        db  0
-palabra3        db  0 
-palabra4        db  0
-palabra5        db  0 
+contador        db  ?
+palabra1        db  ?
+palabra2        db  ?
+palabra3        db  ? 
+palabra4        db  ?
+palabra5        db  ? 
 fragmento       db  32 dup("$")
 limpio          db  32 dup("$")
-palabraI        db  100 dup("$")
-palabraM        db  100 dup("$")
+palabraI        db  20 dup("$")
+palabraM        db  20 dup("$")
 posAnimales1    db  0,4,10,14,22,32
 listaAnimales1  db  "LEON","JIRAFA","MONO","ELEFANTE","HIPOPOTAMO",0
-posAnimales2    db  0,4,9,15,22,29
+posAnimales2    db  0,4,9,15,20,27
 listaAnimales2  db  "GATO","PERRO","CONEJO","OVEJA","CABALLO",0 
 posVehiculos1   db  0,5,9,18,22,25
 listaVehiculos1 db  "CARRO","MOTO","BICICLETA","TREN","BUS",0
-posVehiculos2   db  0,7,11,18,22,31
+posVehiculos2   db  0,7,11,17,21,30
 listaVehiculos2 db  "CRUCERO","BOTE","VELERO","YATE","SUBMARINO",0
 posLenguajes1   db  0,4,14,20,23,28
 listaLenguajes1 db  "RUBY","JAVASCRIPT","PYTHON","PHP","COBOL",0
@@ -83,7 +84,7 @@ mostrar macro var, x
 endm 
 
 pedir_palabra macro lista_pos,lista_palabras
-    LOCAL pedir_palabra1,pedir_palabra2,es_mayuscula,es_minuscula,comprobar_palabra,iguales,no_iguales,limpiar
+    LOCAL pedir_palabra1,pedir_palabra2,es_mayuscula,es_minuscula,comprobar_palabra,iguales1,iguales2,iguales3,iguales4,iguales5,no_iguales,limpiar
     
 pedir_palabra1:
     mostrar palabra, linea
@@ -124,7 +125,7 @@ comprobar_palabra:
     sub al, bl
     mov cx, ax
     repe cmpsb 
-    je iguales
+    je iguales1
     xor si, si
     mov bh, 0
     mov bl, lista_pos[1]
@@ -135,7 +136,7 @@ comprobar_palabra:
     sub al, bl
     mov cx, ax
     repe cmpsb 
-    je iguales 
+    je iguales2 
     xor si, si
     mov bh, 0
     mov bl, lista_pos[2]
@@ -146,7 +147,7 @@ comprobar_palabra:
     sub al, bl
     mov cx, ax
     repe cmpsb 
-    je iguales
+    je iguales3
     xor si, si
     mov bh, 0
     mov bl, lista_pos[3]
@@ -157,7 +158,7 @@ comprobar_palabra:
     sub al, bl
     mov cx, ax
     repe cmpsb 
-    je iguales
+    je iguales4
     xor si, si
     mov bh, 0
     mov bl, lista_pos[4]
@@ -168,12 +169,48 @@ comprobar_palabra:
     sub al, bl
     mov cx, ax
     repe cmpsb 
-    je iguales
+    je iguales5
     jne no_iguales
     
-iguales:
-    PRINT 'Iguales'
+iguales1:
+    PRINT 'Iguales 1'
+    cmp palabra1, 1
+    jz limpiar
+    inc palabra1
+    inc contador
+    jnz limpiar
+    
+iguales2:
+    PRINT 'Iguales 2'
+    cmp palabra2, 1
+    jz limpiar
+    inc palabra2
+    inc contador
+    jnz limpiar
+    
+iguales3:          
+    PRINT 'Iguales 3'
+    cmp palabra3, 1
+    jz limpiar
+    inc palabra3
+    inc contador
     jmp limpiar
+    
+iguales4:
+    PRINT 'Iguales 4'
+    cmp palabra4, 1
+    jz limpiar
+    inc palabra4
+    inc contador
+    jmp limpiar
+    
+iguales5:
+    PRINT 'Iguales 5'
+    cmp palabra5, 1
+    jz limpiar
+    inc palabra5
+    inc contador
+    jmp limpiar    
     
 limpiar: 
     mov di, offset palabraM
@@ -182,7 +219,9 @@ limpiar:
     mov di, offset palabraI
     mov cx, 19
     repe movsb
-    jmp pedir_palabra1
+    cmp contador, 5
+    jz salir
+    jnz pedir_palabra1
     
 no_iguales:
     PRINT 'no iguales'
@@ -190,9 +229,15 @@ no_iguales:
 endm
  
     
-.start
+.start 
 
-mov linea, 0 
+mov linea, 0
+mov contador, 0
+mov palabra1, 0
+mov palabra2, 0
+mov palabra3, 0
+mov palabra4, 0
+mov palabra5, 0
 jmp imprimir_menu 
 
 opcion1:
@@ -207,101 +252,6 @@ opcion2:
     call scan_num
     jmp matriz_animales 
     
-;pedir_palabra1:
-;    dec linea
-;    mostrar palabra, linea
-;    mov ah, 1
-;    xor si, si
-;    jmp pedir_palabra2
-;
-;pedir_palabra2:
-;    int 21h 
-;    cmp al, 48
-;    jz salir
-;    cmp al, 13
-;    jz comprobacion
-;    mov palabraI[si], al
-;    cmp al, 91
-;    jnb es_minuscula
-;    jb es_mayuscula
-;    
-;es_mayuscula: 
-;    mov palabraM[si], al
-;    inc si
-;    jmp pedir_palabra2
-;    
-;es_minuscula:
-;    sub al, 32
-;    mov palabraM[si], al
-;    inc si
-;    jmp pedir_palabra2
-;    
-;comprobacion:
-;    comprobar_palabra posAnimales1,listaAnimales1
-;comprobar_palabra:
-;    xor si, si
-;    mov bh, 0
-;    mov bl, posAnimales1[0]
-;    lea si, listaAnimales1[bx]
-;    lea di, palabraM 
-;    mov ah, 0
-;    mov al, posAnimales1[1]
-;    sub al, bl
-;    mov cx, ax
-;    repe cmpsb 
-;    je iguales
-;    xor si, si 
-;    mov bh, 0
-;    mov bl, posAnimales1[1]
-;    lea si, listaAnimales1[bx]
-;    lea di, palabraM 
-;    mov cx, 6
-;    repe cmpsb
-;    je iguales
-;    xor si, si
-;    mov bh, 0
-;    mov bl, posAnimales1[2]
-;    lea si, listaAnimales1[bx]
-;    lea di, palabraM 
-;    mov cx, 4
-;    repe cmpsb
-;    je iguales
-;    xor si, si 
-;    mov bh, 0
-;    mov bl, posAnimales1[3]
-;    lea si, listaAnimales1[bx]
-;    lea di, palabraM 
-;    mov cx, 8
-;    repe cmpsb
-;    je iguales
-;    xor si, si
-;    mov bh, 0
-;    mov bl, posAnimales1[4]
-;    lea si, listaAnimales1[bx]
-;    lea di, palabraM 
-;    mov cx, 10
-;    repe cmpsb
-;    je iguales
-;    jne no_iguales
-      
-;iguales:
-;    PRINT 'Iguales'
-;    jmp limpiar
-;    
-;limpiar: 
-;    mov di, offset palabraM
-;    mov cx, 19
-;    repe movsb
-;    mov di, offset palabraI
-;    mov cx, 19
-;    repe movsb 
-;    dec linea
-;    jmp pedir_palabra1
-;    
-;no_iguales:
-;    PRINT 'no iguales'
-;    jmp limpiar
-
 imprimir_menu: 
     mostrar msg[0], linea
     mostrar msg[36], linea
